@@ -1,0 +1,188 @@
+# non Preemtive
+pg = [
+    ["P1", 3, 4, 2],
+    ["P2", 1, 2, 1],
+    ["P3", 0, 3, 3],
+    ["P4", 4, 2, 1],
+    ["P5", 6, 4, 3],
+    ["P6", 9, 6, 0],
+]
+
+n = len(pg)
+
+completion = [0] * n
+turnaround = [0] * n
+waiting = [0] * n
+
+visited = [False] * n
+
+time = 0
+completed = 0
+
+flow = []
+print("Non Pre-Emtive: \n")
+
+print("Gantt Chart:")
+
+while completed < n:
+
+    highest_priority = -1
+
+   
+    for i in range(n):
+        if pg[i][1] <= time and not visited[i]:
+
+            if highest_priority == -1 or pg[i][3] < pg[highest_priority][3]:
+                highest_priority = i
+
+    if highest_priority == -1:
+            time += 1
+            continue
+    
+    i = highest_priority
+    
+    flow.append(pg[i][0])
+    
+    start = time    
+    
+    # Run the process completely
+    time += pg[i][2]
+    
+    print(pg[i][0], ":", start, "->", time)
+    
+    completion[i] = time
+    visited[i] = True
+    completed += 1
+
+    
+print("\nNon-Preemptive Priority Flow:")
+print(" -> ".join(flow)," -> END")
+
+
+# Calculate TAT and WT
+for i in range(n):
+    turnaround[i] = completion[i] - pg[i][1]
+    waiting[i] = turnaround[i] - pg[i][2]
+
+
+print("\nPriority Scheduling Serial:")
+
+
+total_tat = 0
+total_wt = 0
+
+print(f"{'pro':<10}{'AT':<10}{'BT':<10}{'Prio':<10}{'CT':<12}{'TAT':<12}{'WT':<12}")
+
+for i in range(n):
+    print(
+        f"{pg[i][0]:<10}",
+        f"{pg[i][1]:<10}",
+        f"{pg[i][2]:<10}",
+        f"{pg[i][3]:<12}",
+        f"{completion[i]:<10}",
+        f"{turnaround[i]:<10}",
+        f"{waiting[i]:<10}"
+        
+    )
+
+    total_tat += turnaround[i]
+    total_wt += waiting[i]
+
+
+print(f"\nAverage Turnaround Time =  {total_tat / n: .2f}")
+print(f"Average Waiting Time =  {total_wt / n: .2f}")
+
+print("\n")
+
+
+print("Pre-Emtive: ")
+
+remaining = [pg[i][2] for i in range(n)]
+completion = [0] * n
+turnaround = [0] * n
+waiting = [0] * n
+
+time = 0
+completed = 0
+
+flow = []
+
+print("Gantt Chart:")
+
+while completed < n:
+
+    highest_priority = -1
+
+  
+    for i in range(n):
+        if pg[i][1] <= time and remaining[i] > 0:
+
+            if highest_priority == -1 or pg[i][3] < pg[highest_priority][3]:
+                highest_priority = i
+
+   
+    if highest_priority == -1:
+        time += 1
+        continue
+
+    i = highest_priority
+
+    start = time
+
+    # Run for 1 unit
+    time += 1
+    remaining[i] -= 1
+
+    # Add process only when process changes
+    if not flow or flow[-1] != pg[i][0]:
+        flow.append(pg[i][0])
+
+    print(pg[i][0], ":", start, "->", time)
+
+    if remaining[i] == 0:
+            completion[i] = time
+            completed += 1
+    
+    
+print("\nPreemptive Priority Flow:")
+print(" -> ".join(flow)," -> END")
+
+    
+    # Calculate TAT and WT
+for i in range(n):
+        turnaround[i] = completion[i] - pg[i][1]
+        waiting[i] = turnaround[i] - pg[i][2]
+
+print("\nPriority Scheduling Serial:")
+
+
+t_tat = 0
+t_wt = 0
+
+print(f"{'pro':<10}{'AT':<10}{'BT':<10}{'Prio':<10}{'CT':<12}{'TAT':<12}{'WT':<12}")
+
+for i in range(n):
+    print(
+        f"{pg[i][0]:<10}",
+        f"{pg[i][1]:<10}",
+        f"{pg[i][2]:<10}",
+        f"{pg[i][3]:<12}",
+        f"{completion[i]:<10}",
+        f"{turnaround[i]:<10}",
+        f"{waiting[i]:<10}"
+        
+    )
+
+    t_tat += turnaround[i]
+    t_wt += waiting[i]
+
+
+print(f"\nAverage Turnaround Time = {t_tat / n: .2f}")
+print(f"Average Waiting Time = {t_wt / n: .2f}")
+
+print("\n")
+
+print("Priority Scheduling Non-Preemtive VS Priority Scheduling Preemtive: \n")
+print(f"\t{"Algo"}\t\t\t\t\t{"Avg Turnaround Time"}\t\t{"Average Waiting Time"}")
+print(f"{"Priority Scheduling Non-Preemtive"}\t\t{total_tat / n: .2f}\t\t\t\t{total_wt / n: .2f}")
+print(f"{"Priority Scheduling Preemtive"}\t\t\t{t_tat / n: .2f}\t\t\t\t{t_wt / n: .2f}")
