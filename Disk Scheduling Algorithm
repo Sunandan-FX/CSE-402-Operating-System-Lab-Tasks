@@ -1,0 +1,15 @@
+reqs = [3, 4, 60, 21, 2, 10, 11]
+head = 10
+
+t = 0
+c = []
+current = head
+
+for req in reqs:
+    t += abs(current - req)
+    current = req
+
+    print(f"sequence order: {current}")
+
+print("\n")
+print(t)
